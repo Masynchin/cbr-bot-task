@@ -23,8 +23,8 @@ async def start(message: Message):
 @dp.message(Command("rates"))
 async def rates(message: Message):
     rates = await db.rates()
-    text = "\n".join(f"{rate.char_code}: {rate.value_per_unit:.3f}" for rate in rates)
-    await message.answer(f"Текущие курсы:\n{text}")
+    text = "\n".join(f"`{rate.char_code}`: {rate.value_per_unit:.3f}" for rate in rates)
+    await message.answer(f"Текущие курсы валют к рублю:\n\n{text}", parse_mode="Markdown")
 
 
 @dp.message(Command("exchange"))
