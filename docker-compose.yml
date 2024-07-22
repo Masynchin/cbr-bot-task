@@ -2,7 +2,14 @@ services:
   currency:
     build: currency
     environment:
-      - REDIS_URL=redis://${REDIS_USER}:${REDIS_PASSWORD}@localhost:6379/0
+      - REDIS_URL=redis://${REDIS_USER}:${REDIS_PASSWORD}@redis:6379/0
+    depends_on:
+      - "redis"
+  bot:
+    build: bot
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - REDIS_URL=redis://${REDIS_USER}:${REDIS_PASSWORD}@redis:6379/0
     depends_on:
       - "redis"
   redis:
