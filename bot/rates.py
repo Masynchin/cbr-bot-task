@@ -8,7 +8,10 @@ class CurrencyRate(NamedTuple):
 
     @classmethod
     def from_bytes(cls, char_code: str, value_per_unit: bytes):
-        return cls(char_code=char_code, value_per_unit=Fraction(value_per_unit.decode()))
+        return cls(
+            char_code=char_code,
+            value_per_unit=Fraction(value_per_unit.decode()),
+        )
 
     def exchange_to(self, other: "CurrencyRate") -> Fraction:
         return self.value_per_unit / other.value_per_unit

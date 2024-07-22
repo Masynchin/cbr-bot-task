@@ -11,8 +11,12 @@ class RatesDatabase:
     async def initialize(self):
         await self.client.initialize()
 
-    async def exchange(self, currency_from: str, currency_to: str) -> tuple[CurrencyRate, CurrencyRate]:
-        (value_per_unit_from, value_per_unit_to) = await self.client.mget((currency_from, currency_to))
+    async def exchange(
+        self, currency_from: str, currency_to: str
+    ) -> tuple[CurrencyRate, CurrencyRate]:
+        (value_per_unit_from, value_per_unit_to) = await self.client.mget(
+            (currency_from, currency_to)
+        )
         return (
             CurrencyRate.from_bytes(currency_from, value_per_unit_from),
             CurrencyRate.from_bytes(currency_to, value_per_unit_to),

@@ -1,0 +1,15 @@
+[tool.ruff]
+line-length = 79
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["D", "E", "W", "F", "B", "C4", "N"]
+ignore = ["D", "N812", "N802", "N818"]
+fixable = ["ALL"]
+pydocstyle.convention = "numpy"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

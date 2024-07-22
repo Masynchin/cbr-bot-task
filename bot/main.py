@@ -7,7 +7,6 @@ from aiogram.types import Message
 
 from const import VALID_CURRENCIES
 from db import RatesDatabase
-from rates import CurrencyRate
 import exceptions
 
 
@@ -23,24 +22,35 @@ async def start(message: Message):
 @dp.message(Command("rates"))
 async def rates(message: Message):
     rates = await db.rates()
-    text = "\n".join(f"`{rate.char_code}`: {rate.value_per_unit:.3f}" for rate in rates)
-    await message.answer(f"Текущие курсы валют к рублю:\n\n{text}", parse_mode="Markdown")
+    text = "\n".join(
+        f"`{rate.char_code}`: {rate.value_per_unit:.3f}" for rate in rates
+    )
+    await message.answer(
+        f"Текущие курсы валют к рублю:\n\n{text}", parse_mode="Markdown"
+    )
 
 
 @dp.message(Command("exchange"))
 async def exchange(message: Message, command: CommandObject):
     try:
-        (currency_from, currency_to, amount) = parse_exchange_arguments(command.args)
+        (currency_from, currency_to, amount) = parse_exchange_arguments(
+            command.args
+        )
         (rate_from, rate_to) = await db.exchange(currency_from, currency_to)
         exchange_rate = rate_from.exchange_to(rate_to)
         exchange_amount = exchange_rate * amount
         await message.answer(
-            f"{amount} {currency_from} будет стоить {exchange_amount:.3f} {currency_to}"
+            f"{amount} {currency_from} будет стоить "
+            f"{exchange_amount:.3f} {currency_to}"
         )
     except exceptions.NoArgumentsPassed:
-        await message.answer("Передайте аргументы, например: /exchange USD RUB 10")
+        await message.answer(
+            "Передайте аргументы, например: /exchange USD RUB 10"
+        )
     except exceptions.WrongArgumentCount:
-        await message.answer("Передайте три аргумента, например: /exchange USD RUB 10")
+        await message.answer(
+            "Передайте три аргумента, например: /exchange USD RUB 10"
+        )
     except exceptions.InvalidAmount:
         await message.answer("Используйте число для количества к обмену")
     except exceptions.InvalidCurrency:
@@ -61,7 +71,10 @@ def parse_exchange_arguments(text: str | None) -> tuple[str, str, int]:
 
     currency_from = currency_from.upper()
     currency_to = currency_to.upper()
-    if currency_from not in VALID_CURRENCIES or currency_to not in VALID_CURRENCIES:
+    if (
+        currency_from not in VALID_CURRENCIES
+        or currency_to not in VALID_CURRENCIES
+    ):
         raise exceptions.InvalidCurrency
 
     return (currency_from, currency_to, int(amount))

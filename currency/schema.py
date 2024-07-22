@@ -11,7 +11,7 @@ from xml.etree import ElementTree
 
 class ExchangeRate(NamedTuple):
     """Курс конкретной валюты к рублю.
-    
+
     `char_code` - ISO Символьный код валюты.
     `value_per_unit` - Курс за 1 единицу валюты.
     """
@@ -22,9 +22,9 @@ class ExchangeRate(NamedTuple):
     @classmethod
     def from_xml(cls, xml: ElementTree):
         """Из XML элемента.
-        
+
         Как выглядит XML:
-        
+
         ~~~xml
         <Valute ID="R01090B">
             <NumCode>933</NumCode>
@@ -37,13 +37,15 @@ class ExchangeRate(NamedTuple):
         ~~~
         """
         char_code = xml.find("CharCode").text
-        value_per_unit = Fraction(xml.find("VunitRate").text.replace(",", ".", 1))
+        value_per_unit = Fraction(
+            xml.find("VunitRate").text.replace(",", ".", 1)
+        )
         return cls(char_code=char_code, value_per_unit=value_per_unit)
 
 
 class ExchangeRates(NamedTuple):
     """Курс валют к рублю.
-    
+
     `date` - актуальность курса.
     `rates` - курсы конкретных валют к рублю.
     """
@@ -54,9 +56,9 @@ class ExchangeRates(NamedTuple):
     @classmethod
     def from_xml(cls, xml: ElementTree):
         """Из XML элемента.
-        
+
         Как выглядит XML:
-        
+
         ~~~xml
         <ValCurs Date="20.07.2024" name="Foreign Currency Market">
             <Valute ID="R01090B">...</Valute>
@@ -65,13 +67,13 @@ class ExchangeRates(NamedTuple):
         ~~~
         """
         date = dt.datetime.strptime(xml.attrib["Date"], "%d.%m.%Y").date()
-        rates = tuple(ExchangeRate.from_xml(rate) for rate in xml)            
+        rates = tuple(ExchangeRate.from_xml(rate) for rate in xml)
         return cls(date=date, rates=rates)
 
     @classmethod
     def from_xml_string(cls, xml: str):
         """Из строки с XML данными."""
-        return cls.from_xml(ElementTree.fromstring(xml))        
+        return cls.from_xml(ElementTree.fromstring(xml))
 
     def add(self, rate: ExchangeRate):
         """Добавление другого курса валюты."""
