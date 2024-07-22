@@ -72,3 +72,7 @@ class ExchangeRates(NamedTuple):
     def from_xml_string(cls, xml: str):
         """Из строки с XML данными."""
         return cls.from_xml(ElementTree.fromstring(xml))        
+
+    def add(self, rate: ExchangeRate):
+        """Добавление другого курса валюты."""
+        return self._replace(rates=(*self.rates, rate))

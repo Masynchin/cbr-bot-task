@@ -4,7 +4,7 @@ import os
 import aiohttp
 
 from db import RatesDatabase
-from schema import ExchangeRates
+from schema import ExchangeRate,ExchangeRates
 
 
 CURRENCY_URL = "https://cbr.ru/scripts/XML_daily.asp"
@@ -27,6 +27,7 @@ async def proccess(session: aiohttp.ClientSession, database: RatesDatabase):
 async def process_unit(session: aiohttp.ClientSession, database: RatesDatabase):
     text = await fetch_currency(session)
     rates = ExchangeRates.from_xml_string(text)
+    rates = rates.add(ExchangeRate(char_code="RUB", value_per_unit=1))
     await database.save(rates)
 
 

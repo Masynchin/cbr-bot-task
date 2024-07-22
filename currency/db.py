@@ -15,4 +15,7 @@ class RatesDatabase:
         await self.client.aclose()
 
     async def save(self, rates: ExchangeRates):
-        ...
+        pipe = self.client.pipeline()
+        for rate in rates.rates:
+            pipe.set(rate.char_code, str(rate.value_per_unit))
+        await pipe.execute()
